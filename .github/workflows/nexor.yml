@@ -12,7 +12,7 @@ jobs:
         run: |
           unzip -o nexor-android-patch.zip
           cp -r patch/app_mojo/. app_mojo/
-          sed -i "s/NEXORMC'YE GİR/NEXORMC GİRİŞ/"app_mojo/src/main/res/values/strings.xml
+          sed -i "s|NEXORMC.*</string>|NEXORMC GIRIS</string>|" app_mojo/src/main/res/values/strings.xml
       - name: Get LTW
         uses: dawidd6/action-download-artifact@v6
         continue-on-error: true

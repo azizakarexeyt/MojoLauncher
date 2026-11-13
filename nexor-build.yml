@@ -1,0 +1,39 @@
+name: Nexor APK
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Nexor yamasini uygula
+        run: |
+          unzip -o nexor-android-patch.zip
+          cp -r patch/app_mojo/. app_mojo/
+      - name: Get LTW
+        uses: dawidd6/action-download-artifact@v6
+        continue-on-error: true
+        with:
+          repo: MojoLauncher/LTW
+          workflow: android.yml
+          workflow_conclusion: success
+          name: output-aar
+          path: app_mojo/libs
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.14.5"
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Build
+        run: |
+          mkdir out
+          gradle :app_mojo:assembleFullDebug
+          mv app_mojo/build/outputs/apk/full/debug/app_mojo-full-debug.apk out/NexorMC.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NexorMC-apk
+          path: out/NexorMC.apk
